@@ -1,14 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { AuthProvider } from "./context/AuthContext";
-import dynamic from "next/dynamic";
-
-// IMPORTACIÓN DINÁMICA: Apagamos el Server-Side Rendering (SSR) específicamente para este componente
-const RoleSwitcherGlobal = dynamic(
-  () => import("./context/AuthContext").then((mod) => mod.RoleSwitcherGlobal),
-  { ssr: false }
-);
+import { AuthProvider, RoleSwitcherGlobal } from "./context/AuthContext";
+import { Suspense } from "react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,8 +29,10 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         <AuthProvider>
           {children}
-          {/* Al tener ssr: false, Vercel saltará este componente en la compilación y no habrá error */}
-          <RoleSwitcherGlobal />
+          {/* Envoltura Suspense requerida por Next.js para aislar hooks de rutas dinámicas */}
+          <Suspense fallback={null}>
+            <RoleSwitcherGlobal />
+          </Suspense>
         </AuthProvider>
       </body>
     </html>
