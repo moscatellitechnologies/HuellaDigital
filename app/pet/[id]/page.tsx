@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import { Phone, ShieldCheck, AlertTriangle, Stethoscope, MapPin, Heart, Loader2, MessageCircle } from "lucide-react";
-
+export const dynamic = "force-dynamic";
 export default function EmergencyPetPage() {
   const params = useParams();
   const petId = params?.id as string;

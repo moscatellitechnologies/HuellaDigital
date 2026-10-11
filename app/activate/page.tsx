@@ -19,7 +19,7 @@ import {
   X,
   Camera
 } from "lucide-react";
-
+export const dynamic = "force-dynamic";
 const DOG_BREEDS = [
   "Golden Retriever", "Labrador Retriever", "Pastor Alemán", "Caniche", 
   "Bulldog Francés", "Bulldog Inglés", "Beagle", "Boxer", "Pitbull", 
