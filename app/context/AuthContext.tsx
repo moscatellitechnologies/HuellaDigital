@@ -20,8 +20,8 @@ const AuthContext = createContext<AuthContextType>({
   signOut: async () => {},
 });
 
-// 1. Protector de Rutas Modificado (Soporte Rol Dual)
-function RouteProtector() {
+// 1. Protector de Rutas Modificado (Contenido Interno)
+function RouteProtectorContent() {
   const { user, profile, loading } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
@@ -42,7 +42,6 @@ function RouteProtector() {
         }
         // NOTA DE REFACTORIZACIÓN: 
         // Si el usuario es Veterinario ("vet"), le damos acceso a AMBAS zonas.
-        // Se eliminó la restricción que lo forzaba a salir de /dashboard.
       }
     }
   }, [user, profile, loading, pathname, router]);
@@ -50,8 +49,17 @@ function RouteProtector() {
   return null;
 }
 
-// 2. Componente Global para el Switcher de Roles (Solo visible para Veterinarios)
-export function RoleSwitcherGlobal() {
+// 1.1 Envoltura Suspense para el Protector de Rutas
+function RouteProtector() {
+  return (
+    <Suspense fallback={null}>
+      <RouteProtectorContent />
+    </Suspense>
+  );
+}
+
+// 2. Switcher de Roles (Contenido Interno)
+function RoleSwitcherContent() {
   const { user, profile, loading } = useAuth();
   const pathname = usePathname();
 
@@ -77,6 +85,15 @@ export function RoleSwitcherGlobal() {
         <Icon className="w-4 h-4 ml-1 opacity-80" />
       </Link>
     </div>
+  );
+}
+
+// 2.1 Envoltura Suspense para el Switcher de Roles Exportado
+export function RoleSwitcherGlobal() {
+  return (
+    <Suspense fallback={null}>
+      <RoleSwitcherContent />
+    </Suspense>
   );
 }
 
@@ -138,9 +155,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <AuthContext.Provider value={{ user, profile, loading, signOut }}>
-      <Suspense fallback={null}>
-        <RouteProtector />
-      </Suspense>
+      <RouteProtector />
       {children}
     </AuthContext.Provider>
   );
