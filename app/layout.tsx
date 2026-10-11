@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AuthProvider, RoleSwitcherGlobal } from "./context/AuthContext";
+import { Suspense } from "react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,7 +30,9 @@ export default function RootLayout({
         <AuthProvider>
           {children}
           {/* Componente inyectado globalmente, se autogestiona según el rol del usuario */}
-          <RoleSwitcherGlobal />
+          <Suspense fallback={null}>
+            <RoleSwitcherGlobal />
+          </Suspense>
         </AuthProvider>
       </body>
     </html>

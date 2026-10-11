@@ -1,12 +1,12 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import { Phone, ShieldCheck, AlertTriangle, Stethoscope, MapPin, Heart, Loader2, MessageCircle } from "lucide-react";
-export const dynamic = "force-dynamic";
-export default function EmergencyPetPage() {
+
+function EmergencyPetContent() {
   const params = useParams();
   const petId = params?.id as string;
   
@@ -171,5 +171,17 @@ export default function EmergencyPetPage() {
 
       </div>
     </main>
+  );
+}
+
+export default function EmergencyPetPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-petlight flex items-center justify-center">
+        <Loader2 className="w-10 h-10 animate-spin text-petgreen" />
+      </div>
+    }>
+      <EmergencyPetContent />
+    </Suspense>
   );
 }
