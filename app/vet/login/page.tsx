@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Stethoscope, ShieldAlert, Lock, Mail, Loader2, ArrowRight, ArrowLeft } from "lucide-react";
+import { Stethoscope, ShieldAlert, Lock, Mail, Loader2, ArrowRight, ArrowLeft, Eye, EyeOff } from "lucide-react"; // Importados Eye y EyeOff
 import { supabase } from "@/lib/supabaseClient";
 
 export default function VetLoginPage() {
@@ -11,6 +11,7 @@ export default function VetLoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [isPending, setIsPending] = useState(false);
+  const [showPassword, setShowPassword] = useState(false); // Estado de visibilidad
 
   const [credentials, setCredentials] = useState({
     email: "",
@@ -163,14 +164,22 @@ export default function VetLoginPage() {
                 <Lock className="w-5 h-5" />
               </span>
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 name="password"
                 required
                 placeholder="••••••••"
                 value={credentials.password}
                 onChange={handleChange}
-                className="w-full pl-10 pr-4 py-2 min-h-[44px] text-base bg-petlight border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-petgreen text-petblue font-medium placeholder-slate-400"
+                className="w-full pl-10 pr-12 py-2 min-h-[44px] text-base bg-petlight border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-petgreen text-petblue font-medium placeholder-slate-400"
               />
+              <button 
+                type="button" 
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-2.5 text-slate-400 hover:text-petgreen transition-colors p-1"
+                tabIndex={-1}
+              >
+                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+              </button>
             </div>
           </div>
 

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { 
   Building2, 
@@ -11,8 +11,9 @@ import {
   ArrowLeft, 
   ExternalLink, 
   Clock,
-  Stethoscope
+  Loader2
 } from "lucide-react";
+import { supabase } from "@/lib/supabaseClient";
 
 interface VetService {
   id: string;
@@ -75,7 +76,53 @@ const initialServices: VetService[] = [
 
 export default function EcosystemDirectoryPage() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [services] = useState<VetService[]>(initialServices);
+  const [services, setServices] = useState<VetService[]>(initialServices);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    fetchDynamicClinics();
+  }, []);
+
+  const fetchDynamicClinics = async () => {
+    setIsLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from("clinic_branches")
+        .select(`
+          id,
+          name,
+          city,
+          address,
+          clinics (
+            name
+          )
+        `);
+
+      if (error) throw error;
+
+      if (data && data.length > 0) {
+        // Mapeamos los datos de la base de datos al formato de la interfaz VetService
+        const dbServices: VetService[] = data.map((branch: any) => ({
+          id: branch.id,
+          name: `${branch.clinics?.name || "Clínica"} - ${branch.name}`,
+          category: "Red Oficial HuellaDigital",
+          address: branch.address,
+          city: branch.city,
+          phone: "", // Aún no capturamos teléfono en el backoffice
+          hours: "Horarios a consultar",
+          verified: true,
+          mapQuery: `${branch.address}, ${branch.city}, Misiones, Argentina`
+        }));
+
+        // Unimos las clínicas de la base de datos con las iniciales
+        setServices([...dbServices, ...initialServices]);
+      }
+    } catch (error) {
+      console.error("Error al cargar clínicas desde Supabase:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   // Filtrado dinámico por nombre, categoría o localidad
   const filteredServices = services.filter(
@@ -134,72 +181,81 @@ export default function EcosystemDirectoryPage() {
         </div>
 
         {/* Grilla de Prestadores Aliados */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          {filteredServices.length > 0 ? (
-            filteredServices.map((service) => (
-              <div 
-                key={service.id} 
-                className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 flex flex-col justify-between space-y-5 hover:shadow-md transition-all"
-              >
-                <div className="flex items-start gap-4">
-                  <div className="w-14 h-14 rounded-2xl bg-petlight flex items-center justify-center text-petblue border border-slate-200 shrink-0 shadow-inner">
-                    <Building2 className="w-7 h-7 text-petgreen" />
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex flex-col sm:flex-row justify-between items-start gap-2">
-                      <h3 className="text-xl font-bold text-petblue">{service.name}</h3>
-                      {service.verified && (
-                        <span className="inline-flex items-center gap-1.5 text-xs bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full font-semibold border border-emerald-100 whitespace-nowrap">
-                          <ShieldCheck className="w-4 h-4 text-petgreen" /> Aliado
-                        </span>
-                      )}
+        {isLoading ? (
+          <div className="py-20 flex flex-col items-center justify-center">
+            <Loader2 className="w-10 h-10 animate-spin text-petgreen mb-4" />
+            <p className="text-slate-500 font-medium">Cargando clínicas aliadas...</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            {filteredServices.length > 0 ? (
+              filteredServices.map((service) => (
+                <div 
+                  key={service.id} 
+                  className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 flex flex-col justify-between space-y-5 hover:shadow-md transition-all"
+                >
+                  <div className="flex items-start gap-4">
+                    <div className="w-14 h-14 rounded-2xl bg-petlight flex items-center justify-center text-petblue border border-slate-200 shrink-0 shadow-inner">
+                      <Building2 className="w-7 h-7 text-petgreen" />
                     </div>
-                    <span className="text-sm font-semibold text-petgreen block mt-1">
-                      {service.category}
-                    </span>
+                    <div className="flex-1">
+                      <div className="flex flex-col sm:flex-row justify-between items-start gap-2">
+                        <h3 className="text-xl font-bold text-petblue">{service.name}</h3>
+                        {service.verified && (
+                          <span className="inline-flex items-center gap-1.5 text-xs bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full font-semibold border border-emerald-100 whitespace-nowrap">
+                            <ShieldCheck className="w-4 h-4 text-petgreen" /> Aliado
+                          </span>
+                        )}
+                      </div>
+                      <span className="text-sm font-semibold text-petgreen block mt-1">
+                        {service.category}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3 text-sm text-slate-600 bg-slate-50/50 p-4 rounded-xl border border-slate-100">
+                    <p className="flex items-center gap-2 font-medium">
+                      <MapPin className="w-4 h-4 text-slate-400 shrink-0" /> 
+                      <span>{service.address} • <strong className="text-petblue">{service.city}</strong></span>
+                    </p>
+                    <p className="flex items-center gap-2 font-medium">
+                      <Clock className="w-4 h-4 text-slate-400 shrink-0" /> 
+                      <span>{service.hours}</span>
+                    </p>
+                  </div>
+
+                  {/* Botones de Acción */}
+                  <div className={`grid gap-3 pt-3 border-t border-slate-100 ${service.phone ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1'}`}>
+                    {service.phone && (
+                      <a
+                        href={`https://wa.me/${service.phone.replace(/[^0-9]/g, "")}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-full min-h-[44px] flex items-center justify-center gap-2 bg-petlight hover:bg-slate-200 text-petblue font-bold text-sm py-2.5 px-4 rounded-xl transition-all"
+                      >
+                        <Phone className="w-4 h-4 text-petgreen" />
+                        <span>Contactar</span>
+                      </a>
+                    )}
+                    <a
+                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(service.mapQuery)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full min-h-[44px] flex items-center justify-center gap-2 bg-petblue hover:bg-[#0b1f33] text-white font-bold text-sm py-2.5 px-4 rounded-xl transition-all shadow"
+                    >
+                      <ExternalLink className="w-4 h-4 text-petgreen" />
+                      <span>Ver Mapa</span>
+                    </a>
                   </div>
                 </div>
-
-                <div className="space-y-3 text-sm text-slate-600 bg-slate-50/50 p-4 rounded-xl border border-slate-100">
-                  <p className="flex items-center gap-2 font-medium">
-                    <MapPin className="w-4 h-4 text-slate-400 shrink-0" /> 
-                    <span>{service.address} • <strong className="text-petblue">{service.city}</strong></span>
-                  </p>
-                  <p className="flex items-center gap-2 font-medium">
-                    <Clock className="w-4 h-4 text-slate-400 shrink-0" /> 
-                    <span>{service.hours}</span>
-                  </p>
-                </div>
-
-                {/* Botones de Acción */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3 border-t border-slate-100">
-                  <a
-                    href={`https://wa.me/${service.phone.replace(/[^0-9]/g, "")}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full min-h-[44px] flex items-center justify-center gap-2 bg-petlight hover:bg-slate-200 text-petblue font-bold text-sm py-2.5 px-4 rounded-xl transition-all"
-                  >
-                    <Phone className="w-4 h-4 text-petgreen" />
-                    <span>Contactar</span>
-                  </a>
-                  <a
-                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(service.mapQuery)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full min-h-[44px] flex items-center justify-center gap-2 bg-petblue hover:bg-[#0b1f33] text-white font-bold text-sm py-2.5 px-4 rounded-xl transition-all shadow"
-                  >
-                    <ExternalLink className="w-4 h-4 text-petgreen" />
-                    <span>Ver Mapa</span>
-                  </a>
-                </div>
+              ))
+            ) : (
+              <div className="col-span-1 md:col-span-2 py-16 text-center text-slate-500 bg-white rounded-2xl border border-slate-100 text-lg">
+                No se encontraron clínicas que coincidan con la búsqueda.
               </div>
-            ))
-          ) : (
-            <div className="col-span-1 md:col-span-2 py-16 text-center text-slate-500 bg-white rounded-2xl border border-slate-100 text-lg">
-              No se encontraron clínicas que coincidan con la búsqueda.
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+        )}
 
       </div>
     </main>

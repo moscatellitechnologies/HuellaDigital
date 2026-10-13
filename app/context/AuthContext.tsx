@@ -105,18 +105,23 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
 
   useEffect(() => {
+    let mounted = true; // Agregado para estabilización
+
     const fetchSession = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
-        setUser(session?.user ?? null);
+        const { data: { session }, error } = await supabase.auth.getSession();
+        if (error) throw error;
         
-        if (session?.user) {
-          await loadProfile(session.user.id);
+        if (mounted) {
+          setUser(session?.user ?? null);
+          if (session?.user) {
+            await loadProfile(session.user.id);
+          }
         }
       } catch (error) {
         console.error("Error al obtener sesión:", error);
       } finally {
-        setLoading(false);
+        if (mounted) setLoading(false);
       }
     };
 
@@ -124,17 +129,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        setUser(session?.user ?? null);
-        if (session?.user) {
-          await loadProfile(session.user.id);
-        } else {
-          setProfile(null);
+        if (mounted) {
+          setUser(session?.user ?? null);
+          if (session?.user) {
+            await loadProfile(session.user.id);
+          } else {
+            setProfile(null);
+          }
+          setLoading(false);
         }
-        setLoading(false);
       }
     );
 
     return () => {
+      mounted = false; // Limpieza al desmontar
       authListener.subscription.unsubscribe();
     };
   }, []);

@@ -4,12 +4,13 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "@/lib/supabaseClient";
-import { Mail, Lock, Loader2, ShieldCheck } from "lucide-react";
+import { Mail, Lock, Loader2, ShieldCheck, Eye, EyeOff } from "lucide-react"; // Importar Eye y EyeOff
 
 export default function LoginPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false); // Estado del ojo
   const [formData, setFormData] = useState({ email: "", password: "" });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -81,13 +82,21 @@ export default function LoginPage() {
                 <Lock className="w-5 h-5" />
               </span>
               <input 
-                type="password" 
+                type={showPassword ? "text" : "password"} // Condicional de visibilidad
                 required 
                 placeholder="••••••••"
-                className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-petgreen text-slate-700 font-medium"
+                className="w-full pl-10 pr-12 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-petgreen text-slate-700 font-medium"
                 value={formData.password} 
                 onChange={e => setFormData({...formData, password: e.target.value})} 
               />
+              <button 
+                type="button" 
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-2.5 text-slate-400 hover:text-petgreen transition-colors p-1"
+                tabIndex={-1}
+              >
+                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+              </button>
             </div>
           </div>
           

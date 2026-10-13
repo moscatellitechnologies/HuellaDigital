@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { 
   ShieldCheck, 
   QrCode, 
@@ -9,84 +9,16 @@ import {
   Building2, 
   ArrowRight, 
   PawPrint, 
-  Menu, 
-  X,
   ExternalLink
 } from "lucide-react";
 
 export default function HomePage() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  // Eliminamos el estado mobileMenuOpen y todo el <header> original
+  // ya que ahora la navegación la controla el <GlobalNav/> desde el layout.tsx
 
   return (
     <div className="min-h-screen bg-petlight flex flex-col justify-between selection:bg-petgreen selection:text-white">
       
-      {/* Barra de Navegación Global Superior */}
-      <header className="sticky top-0 z-50 bg-petblue/95 backdrop-blur-md text-white border-b border-white/10 shadow-md">
-        <div className="max-w-6xl mx-auto px-4 py-3.5 flex justify-between items-center">
-          
-          {/* Logo e Isotipo */}
-          <a href="/" className="flex items-center gap-2 group">
-            <div className="w-9 h-9 bg-petgreen rounded-xl flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
-              <PawPrint className="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <span className="font-bold tracking-tight text-lg block text-white leading-none">
-                Huella<span className="text-petgreen">Digital</span>
-              </span>
-              <span className="text-[10px] text-slate-300 font-mono tracking-widest uppercase">Misiones, Arg</span>
-            </div>
-          </a>
-
-          {/* Enlaces de Navegación (Desktop) */}
-          <nav className="hidden md:flex items-center gap-6 text-xs font-semibold text-slate-200">
-            <a href="/" className="hover:text-petgreen transition-colors">Inicio</a>
-            <a href="/activate" className="hover:text-petgreen transition-colors">Activar Tarjeta</a>
-            <a href="/ecosystem/adoptions" className="hover:text-petgreen transition-colors">Adopciones y Extravíos</a>
-            <a href="/ecosystem/directory" className="hover:text-petgreen transition-colors">Directorio de Servicios</a>
-          </nav>
-
-          {/* CTAs de Acceso a Paneles (Desktop) */}
-          <div className="hidden md:flex items-center gap-3">
-            <a
-              href="/dashboard"
-              className="flex items-center justify-center min-h-[44px] gap-1.5 bg-white/10 hover:bg-white/20 text-white text-xs font-bold py-2 px-3.5 rounded-xl border border-white/10 transition-all cursor-pointer"
-            >
-              <span>Panel Tutor</span>
-            </a>
-            <a
-              href="/vet/login"
-              className="flex items-center justify-center min-h-[44px] gap-1.5 bg-petgreen hover:bg-emerald-600 text-white text-xs font-bold py-2 px-4 rounded-xl shadow transition-all cursor-pointer"
-            >
-              <Stethoscope className="w-3.5 h-3.5" />
-              <span>Portal Veterinario</span>
-            </a>
-          </div>
-
-          {/* Botón Menú Móvil */}
-          <button
-            type="button"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden text-slate-200 hover:text-white p-1 cursor-pointer min-w-[44px] min-h-[44px] flex items-center justify-center"
-          >
-            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
-        </div>
-
-        {/* Menú Desplegable Móvil */}
-        {mobileMenuOpen && (
-          <div className="md:hidden bg-petblue border-t border-white/10 px-4 py-4 space-y-3 animate-in slide-in-from-top duration-200">
-            <a href="/" className="block text-xs font-bold text-slate-200 hover:text-petgreen py-2.5 border-b border-white/5">Inicio</a>
-            <a href="/activate" className="block text-xs font-bold text-slate-200 hover:text-petgreen py-2.5 border-b border-white/5">Activar Tarjeta NFC</a>
-            <a href="/ecosystem/adoptions" className="block text-xs font-bold text-slate-200 hover:text-petgreen py-2.5 border-b border-white/5">Adopciones y Extravíos</a>
-            <a href="/ecosystem/directory" className="block text-xs font-bold text-slate-200 hover:text-petgreen py-2.5 border-b border-white/5">Directorio de Servicios</a>
-            <div className="pt-4 flex flex-col gap-3">
-              <a href="/dashboard" className="w-full flex items-center justify-center min-h-[44px] bg-white/10 text-white text-xs font-bold py-2.5 rounded-xl border border-white/10">Panel del Tutor</a>
-              <a href="/vet/login" className="w-full flex items-center justify-center min-h-[44px] bg-petgreen text-white text-xs font-bold py-2.5 rounded-xl shadow">Portal Veterinario</a>
-            </div>
-          </div>
-        )}
-      </header>
-
       {/* Hero Section */}
       <section className="bg-petblue text-white py-20 px-4 relative overflow-hidden">
         <div className="max-w-4xl mx-auto text-center relative z-10 space-y-6">

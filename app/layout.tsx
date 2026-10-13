@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AuthProvider, RoleSwitcherGlobal } from "./context/AuthContext";
+import { GlobalNav } from "@/components/GlobalNav";
 import { Suspense } from "react";
 
 const geistSans = Geist({
@@ -28,6 +29,7 @@ export default function RootLayout({
     <html lang="es" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
         <AuthProvider>
+          <GlobalNav />
           {children}
           {/* Envoltura Suspense requerida por Next.js para aislar hooks de rutas dinámicas */}
           <Suspense fallback={null}>
