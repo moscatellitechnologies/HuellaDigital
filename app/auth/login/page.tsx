@@ -41,10 +41,21 @@ export default function LoginPage() {
     setIsGoogleLoading(true);
     setError("");
     try {
+      // Detección inteligente de URL para Vercel o Entorno Local
+      const getURL = () => {
+        let url =
+          process?.env?.NEXT_PUBLIC_SITE_URL ?? // Fija en producción
+          process?.env?.NEXT_PUBLIC_VERCEL_URL ?? // Automática de Vercel
+          'http://localhost:3000'; // Fallback local
+        url = url.includes('http') ? url : `https://${url}`;
+        url = url.charAt(url.length - 1) === '/' ? url : `${url}/`;
+        return url;
+      };
+
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/dashboard`
+          redirectTo: `${getURL()}dashboard`
         }
       });
       if (error) throw error;

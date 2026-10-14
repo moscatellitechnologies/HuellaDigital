@@ -76,9 +76,8 @@ function NavContent() {
         </div>
       </nav>
       
-      {/* Spacer para que el contenido no quede oculto bajo los navs fijos */}
-      <div className="h-0 md:h-16" />
-      <div className="h-16 md:h-0 block md:hidden" />
+      {/* Spacer para que el contenido no quede oculto bajo el nav fijo superior (solo visible en Desktop) */}
+      <div className="hidden md:block h-16" />
     </>
   );
 }
