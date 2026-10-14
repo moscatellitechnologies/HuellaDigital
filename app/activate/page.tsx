@@ -19,6 +19,7 @@ import {
   X,
   Camera
 } from "lucide-react";
+
 const DOG_BREEDS = [
   "Golden Retriever", "Labrador Retriever", "Pastor Alemán", "Caniche", 
   "Bulldog Francés", "Bulldog Inglés", "Beagle", "Boxer", "Pitbull", 
@@ -62,7 +63,9 @@ function ActivateContent() {
     petName: "",
     species: "Perro",
     breed: "",
-    age: "",
+    birthDate: "",
+    sex: "Macho",
+    reproductiveStatus: "Entero",
     ownerName: "",
     email: "",
     phone: "",
@@ -81,12 +84,14 @@ function ActivateContent() {
   useEffect(() => {
     if (user && formData.ownerName === "") {
       const fetchProfile = async () => {
-        const { data } = await supabase.from('profiles').select('full_name').eq('id', user.id).single();
+        const { data } = await supabase.from('profiles').select('full_name, phone, location').eq('id', user.id).single();
         if (data) {
           setFormData(prev => ({
             ...prev,
             ownerName: data.full_name || "",
-            email: user.email || ""
+            email: user.email || "",
+            phone: data.phone || "",
+            location: data.location || "Posadas, Misiones"
           }));
         }
       };
@@ -268,24 +273,38 @@ function ActivateContent() {
         publicAvatarUrl = urlData.publicUrl;
       }
 
+      // Guardar el teléfono y localidad en el perfil del tutor
+      await supabase.from('profiles').update({ 
+        phone: formData.phone,
+        location: formData.location
+      }).eq('id', user.id);
+
+      // Inserción segura que soporta tanto la columna 'age' antigua como las nuevas biométricas
+      const petInsertPayload: any = {
+        card_id: cardData.id,
+        owner_id: user.id,
+        name: formData.petName,
+        species: formData.species,
+        breed: formData.breed || "No especificada",
+        age: formData.birthDate ? formData.birthDate : "No especificada",
+        avatar_url: publicAvatarUrl,
+        emergency_notes: formData.medicalCondition
+      };
+
+      // Agregar campos biométricos opcionales si están disponibles
+      if (formData.birthDate) petInsertPayload.birth_date = formData.birthDate;
+      if (formData.sex) petInsertPayload.sex = formData.sex;
+      if (formData.reproductiveStatus) petInsertPayload.reproductive_status = formData.reproductiveStatus;
+
       const { data: insertedPet, error: petError } = await supabase
         .from('pets')
-        .insert([{
-          card_id: cardData.id,
-          owner_id: user.id,
-          name: formData.petName,
-          species: formData.species,
-          breed: formData.breed || "No especificada",
-          age: formData.age || "No especificada",
-          avatar_url: publicAvatarUrl,
-          emergency_notes: formData.medicalCondition
-        }])
+        .insert([petInsertPayload])
         .select('id')
         .single();
 
       if (petError) {
-        console.error(petError);
-        throw new Error("Ocurrió un error interno al registrar los datos biométricos de la mascota.");
+        console.error("Detalle del error en Supabase insert:", petError);
+        throw new Error(`Error en BD: ${petError.message || petError.details || "Verifica las columnas de la tabla pets"}`);
       }
 
       const { error: cardUpdateError } = await supabase
@@ -420,16 +439,46 @@ function ActivateContent() {
 
                   <div>
                     <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">
-                      Edad (Opcional)
+                      Fecha de Nac.
                     </label>
                     <input
-                      type="text"
-                      name="age"
-                      placeholder="Ej. 3 años"
-                      value={formData.age}
+                      type="date"
+                      name="birthDate"
+                      value={formData.birthDate}
                       onChange={handleChange}
                       className="w-full px-3 py-2.5 text-base min-h-[44px] bg-petlight border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-petgreen text-petblue placeholder-slate-400 font-medium"
                     />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">
+                      Sexo <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      name="sex"
+                      value={formData.sex}
+                      onChange={handleChange}
+                      className="w-full px-3 py-2.5 text-base min-h-[44px] bg-petlight border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-petgreen text-petblue font-medium"
+                    >
+                      <option value="Macho">Macho</option>
+                      <option value="Hembra">Hembra</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">
+                      Reproductivo <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      name="reproductiveStatus"
+                      value={formData.reproductiveStatus}
+                      onChange={handleChange}
+                      className="w-full px-3 py-2.5 text-base min-h-[44px] bg-petlight border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-petgreen text-petblue font-medium"
+                    >
+                      <option value="Entero">Entero</option>
+                      <option value="Castrado">Castrado</option>
+                    </select>
                   </div>
                 </div>
 

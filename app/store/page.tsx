@@ -81,7 +81,7 @@ Dirección: ${checkoutAddress}
             Tienda HuellaDigital
           </h1>
           <p className="text-slate-600 max-w-xl mx-auto font-medium">
-            Equipamiento inteligente para la seguridad de tu mascota. Sin baterías, sin suscripciones mensuales. Todo centralizado en tu perfil.
+            Equipamiento inteligente para la seguridad de tu mascota. Todo centralizado en tu perfil.
           </p>
         </div>
 
@@ -169,6 +169,13 @@ Dirección: ${checkoutAddress}
                   <h4 className="font-bold text-sm text-slate-800 line-clamp-2 leading-tight">{selectedProduct.name}</h4>
                   <span className="font-black text-petgreen mt-1">${Number(selectedProduct.price).toLocaleString("es-AR")}</span>
                 </div>
+              </div>
+
+              {/* AVISO DE SUSCRIPCIÓN COMERCIAL */}
+              <div className="bg-blue-50 border border-blue-100 p-4 rounded-xl mb-6">
+                <p className="text-sm text-blue-800 font-medium leading-relaxed">
+                  💬 <strong>¡Tu compra incluye los primeros 6 meses de suscripción completamente GRATIS!</strong> A partir del mes 7, el costo de mantenimiento del perfil digital y alertas es de solo $4.000 ARS/mes.
+                </p>
               </div>
 
               <form onSubmit={handleWhatsAppCheckout} className="space-y-4">

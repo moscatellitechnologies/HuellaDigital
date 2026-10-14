@@ -11,8 +11,6 @@ import {
   Loader2, 
   Camera, 
   AlertCircle, 
-  Phone, 
-  MapPin, 
   PawPrint 
 } from "lucide-react";
 
@@ -34,7 +32,9 @@ function EditPetContent() {
     name: "",
     species: "",
     breed: "",
-    age: "",
+    birthDate: "",
+    sex: "Macho",
+    reproductiveStatus: "Entero",
     emergency_notes: ""
   });
 
@@ -60,7 +60,9 @@ function EditPetContent() {
           name: data.name || "",
           species: data.species || "",
           breed: data.breed || "",
-          age: data.age || "",
+          birthDate: data.birth_date || "",
+          sex: data.sex || "Macho",
+          reproductiveStatus: data.reproductive_status || "Entero",
           emergency_notes: data.emergency_notes || ""
         });
         
@@ -84,7 +86,7 @@ function EditPetContent() {
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
@@ -122,7 +124,9 @@ function EditPetContent() {
         .from("pets")
         .update({
           name: formData.name,
-          age: formData.age,
+          birth_date: formData.birthDate || null,
+          sex: formData.sex,
+          reproductive_status: formData.reproductiveStatus,
           emergency_notes: formData.emergency_notes,
           avatar_url: publicAvatarUrl
         })
@@ -214,15 +218,41 @@ function EditPetContent() {
             </div>
             
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Edad Actual</label>
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Fecha de Nacimiento</label>
               <input 
-                type="text" 
-                name="age" 
-                value={formData.age} 
+                type="date" 
+                name="birthDate" 
+                value={formData.birthDate} 
                 onChange={handleChange} 
-                placeholder="Ej. 4 años"
                 className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-petgreen focus:outline-none text-slate-800 placeholder:text-slate-400 font-medium"
               />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-5">
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Sexo</label>
+              <select
+                name="sex"
+                value={formData.sex}
+                onChange={handleChange}
+                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-petgreen text-slate-800 font-medium"
+              >
+                <option value="Macho">Macho</option>
+                <option value="Hembra">Hembra</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Reproductivo</label>
+              <select
+                name="reproductiveStatus"
+                value={formData.reproductiveStatus}
+                onChange={handleChange}
+                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-petgreen text-slate-800 font-medium"
+              >
+                <option value="Entero">Entero</option>
+                <option value="Castrado">Castrado</option>
+              </select>
             </div>
           </div>
 

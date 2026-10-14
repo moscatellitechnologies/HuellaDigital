@@ -16,8 +16,39 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "HuellaDigital",
-  description: "Ecosistema de Mascotas - Misiones",
+  metadataBase: new URL("https://huelladigital.com"),
+  title: {
+    default: "HuellaDigital • Identificación Inteligente de Mascotas en Misiones",
+    template: "%s | HuellaDigital Misiones",
+  },
+  description: "Ecosistema Digital Regional de Identificación NFC/QR, Historia Clínica Digital y Red Comunitaria de Adopciones en Misiones, Argentina.",
+  keywords: ["Mascotas Misiones", "NFC Mascotas Posadas", "Identificación Canina Misiones", "Veterinarios Misiones", "HuellaDigital"],
+  openGraph: {
+    title: "HuellaDigital • Identificación Inteligente de Mascotas en Misiones",
+    description: "Conectando el cuidado de tus mascotas con tecnología NFC, historia clínica e identificación instantánea.",
+    url: "https://huelladigital.com",
+    siteName: "HuellaDigital Misiones",
+    images: [
+      {
+        url: "/logo-huella.png",
+        width: 1200,
+        height: 630,
+        alt: "HuellaDigital Misiones",
+      },
+    ],
+    locale: "es_AR",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "HuellaDigital • Identificación Inteligente de Mascotas",
+    description: "Ecosistema Digital de Mascotas en Misiones, Argentina.",
+    images: ["/logo-huella.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({
@@ -31,7 +62,6 @@ export default function RootLayout({
         <AuthProvider>
           <GlobalNav />
           {children}
-          {/* Envoltura Suspense requerida por Next.js para aislar hooks de rutas dinámicas */}
           <Suspense fallback={null}>
             <RoleSwitcherGlobal />
           </Suspense>

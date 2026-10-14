@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import { 
   ShieldCheck, 
   QrCode, 
@@ -9,53 +10,67 @@ import {
   Building2, 
   ArrowRight, 
   PawPrint, 
-  ExternalLink
+  ExternalLink,
+  ShoppingBag,
+  Sparkles,
+  CheckCircle2
 } from "lucide-react";
+import NfcCardMockup from "@/components/NfcCardMockup";
 
 export default function HomePage() {
-  // Eliminamos el estado mobileMenuOpen y todo el <header> original
-  // ya que ahora la navegación la controla el <GlobalNav/> desde el layout.tsx
-
   return (
     <div className="min-h-screen bg-petlight flex flex-col justify-between selection:bg-petgreen selection:text-white">
       
-      {/* Hero Section */}
-      <section className="bg-petblue text-white py-20 px-4 relative overflow-hidden">
-        <div className="max-w-4xl mx-auto text-center relative z-10 space-y-6">
-          <div className="inline-flex items-center gap-1.5 bg-white/10 backdrop-blur-md px-3.5 py-1.5 rounded-full text-xs font-medium tracking-wide text-petgreen border border-white/10 shadow-sm">
-            <ShieldCheck className="w-4 h-4 text-petgreen" />
-            <span>Ecosistema Inteligente de Identificación en Misiones</span>
+      {/* Hero Section Reestructurado (2 Columnas Desktop / Prioridad Visual Mobile) */}
+      <section className="bg-petblue text-white py-12 lg:py-20 px-4 relative overflow-hidden">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
+          
+          {/* Columna Izquierda: Tarjeta 3D Interactiva (Prioridad visual en mobile) */}
+          <div className="lg:col-span-5 flex justify-center w-full pt-4 lg:pt-0">
+            <div className="relative w-full max-w-md">
+              <div className="absolute inset-0 bg-white/5 rounded-full blur-3xl pointer-events-none"></div>
+              <NfcCardMockup />
+            </div>
           </div>
 
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-tight">
-            Conectando el cuidado de <span className="text-petgreen">tus mascotas</span>
-          </h1>
+          {/* Columna Derecha: Propuesta de Valor y CTAs (Abajo en mobile, derecha en desktop) */}
+          <div className="lg:col-span-7 space-y-6 text-center lg:text-left mt-6 lg:mt-0 lg:pl-8">
+            <div className="inline-flex items-center gap-1.5 bg-white/10 backdrop-blur-md px-3.5 py-1.5 rounded-full text-xs font-medium tracking-wide text-petgreen border border-white/10 shadow-sm mx-auto lg:mx-0">
+              <ShieldCheck className="w-4 h-4 text-petgreen" />
+              <span>Ecosistema Inteligente de Identificación en Misiones</span>
+            </div>
 
-          <p className="text-sm sm:text-base text-slate-300 max-w-2xl mx-auto leading-relaxed font-medium">
-            Identificación NFC instantánea, historial clínico digital inmutable y una red comunitaria unificada para proteger a perros, gatos y animales en toda la provincia de Misiones.
-          </p>
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-tight">
+              Conectando el cuidado de <span className="text-petgreen">tus mascotas</span>
+            </h1>
 
-          <div className="flex flex-col sm:flex-row justify-center items-center gap-3 pt-4">
-            <a
-              href="/activate"
-              className="w-full sm:w-auto min-h-[44px] flex items-center justify-center gap-2 bg-petgreen hover:bg-emerald-600 text-white font-bold py-3.5 px-7 rounded-2xl shadow-xl shadow-emerald-600/30 transition-all active:scale-[0.98] text-sm cursor-pointer"
-            >
-              <span>Activar mi Tarjeta NFC</span>
-              <ArrowRight className="w-4 h-4" />
-            </a>
-            <a
-              href="/vet/login"
-              className="w-full sm:w-auto min-h-[44px] flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 text-white font-bold py-3.5 px-7 rounded-2xl border border-white/20 transition-all active:scale-[0.98] text-sm cursor-pointer"
-            >
-              <Stethoscope className="w-4 h-4 text-petgreen" />
-              <span>Soy Veterinario / Ingresar</span>
-            </a>
+            <p className="text-sm sm:text-base text-slate-300 max-w-xl mx-auto lg:mx-0 leading-relaxed font-medium">
+              Identificación NFC instantánea, historial clínico digital inmutable y una red comunitaria unificada para proteger a perros, gatos y animales en toda la provincia de Misiones.
+            </p>
+
+            <div className="flex flex-col sm:flex-row justify-center lg:justify-start items-center gap-3 pt-2">
+              <a
+                href="/activate"
+                className="w-full sm:w-auto min-h-[44px] flex items-center justify-center gap-2 bg-petgreen hover:bg-emerald-600 text-white font-bold py-3.5 px-7 rounded-2xl shadow-xl shadow-emerald-600/30 transition-all active:scale-[0.98] text-sm cursor-pointer"
+              >
+                <span>Activar mi Tarjeta NFC</span>
+                <ArrowRight className="w-4 h-4" />
+              </a>
+              <a
+                href="/vet/login"
+                className="w-full sm:w-auto min-h-[44px] flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 text-white font-bold py-3.5 px-7 rounded-2xl border border-white/20 transition-all active:scale-[0.98] text-sm cursor-pointer"
+              >
+                <Stethoscope className="w-4 h-4 text-petgreen" />
+                <span>Soy Veterinario / Ingresar</span>
+              </a>
+            </div>
           </div>
+
         </div>
       </section>
 
-      {/* Características Clave */}
-      <section className="max-w-6xl mx-auto px-4 -mt-10 relative z-20 mb-16">
+      {/* Características Clave (Inmediatamente debajo del Hero) */}
+      <section className="max-w-6xl mx-auto px-4 -mt-6 lg:-mt-10 relative z-20 mb-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           
           <div className="bg-white rounded-2xl p-6 shadow-md border border-slate-100 space-y-3">
@@ -88,6 +103,42 @@ export default function HomePage() {
             </p>
           </div>
 
+        </div>
+      </section>
+
+      {/* Banner Comercial de la Tienda (Actualizado) */}
+      <section className="max-w-6xl mx-auto px-4 mb-16 w-full">
+        <div className="bg-gradient-to-r from-petblue via-[#0d2a45] to-slate-900 rounded-3xl p-8 sm:p-10 shadow-xl border border-white/10 relative overflow-hidden text-white flex flex-col md:flex-row items-center justify-between gap-8">
+          
+          <div className="space-y-4 max-w-xl text-center md:text-left z-10">
+            <div className="inline-flex items-center gap-2 bg-petgreen/20 text-petgreen px-3 py-1 rounded-full text-xs font-bold border border-petgreen/30">
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Tienda Oficial • Misiones</span>
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight leading-tight">
+              Protegé a tu mascota hoy con nuestra <span className="text-petgreen">Tarjeta Inteligente NFC</span>
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              Resistente al agua, sin baterías y vinculable en 1 minuto. Quien la encuentre podrá contactarte al instante por WhatsApp con un solo toque de su celular.
+            </p>
+            
+            <div className="flex flex-wrap justify-center md:justify-start gap-4 text-xs font-medium text-slate-300 pt-1">
+              <span className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4 text-petgreen" /> Envío a toda la provincia</span>
+              <span className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4 text-petgreen" /> 6 meses GRATIS de suscripción</span>
+            </div>
+          </div>
+
+          <div className="flex flex-col items-center shrink-0 w-full md:w-auto z-10 bg-white/5 backdrop-blur-md p-6 rounded-2xl border border-white/10">
+            <span className="text-xs font-bold uppercase tracking-widest text-slate-400">TARJETA + PERFIL DIGITAL</span>
+            <div className="text-3xl font-black text-petgreen my-1">$35.000 <span className="text-xs text-slate-300 font-normal">ARS</span></div>
+            <Link
+              href="/store"
+              className="w-full min-h-[44px] flex items-center justify-center gap-2 bg-petgreen hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-all active:scale-95 text-sm mt-2 cursor-pointer"
+            >
+              <ShoppingBag className="w-4 h-4" />
+              <span>Ir a la Tienda</span>
+            </Link>
+          </div>
         </div>
       </section>
 

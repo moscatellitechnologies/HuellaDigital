@@ -168,7 +168,7 @@ export default function OwnerDashboardPage() {
 
                     <div className="flex gap-2">
                       <Link
-                        href={`/pet/${pet.id}`}
+                        href={`/pet/${uid || pet.id}`}
                         className="flex-1 min-h-[44px] flex items-center justify-center gap-1.5 bg-petlight hover:bg-slate-100 text-petblue text-xs font-bold py-2 rounded-xl transition-all border border-slate-200"
                       >
                         <ExternalLink className="w-4 h-4" />
